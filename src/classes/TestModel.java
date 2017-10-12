@@ -14,69 +14,68 @@ import weka.core.DenseInstance;
 import weka.core.Instances;
 
 public class TestModel {
-	String text;
+	String text, line;
 	Instances instances;
 	FilteredClassifier classifier;
 	
-	public void loadInput(String fileName) {
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(fileName));
-			String line;
+	// loading input data
+	public void loadInput ( String fileNam e ) {
+            try {
+			BufferedReader reader = new BufferedReader( new FileReader( fileName ) );
 			text = "";
-			while ((line = reader.readLine()) != null) {
-                text = text + " " + line;
-            }
-			System.out.println("Loaded data: " + fileName );
+			while ( ( line = reader.readLine() ) != null ) {
+			    text = text + " " + line;
+			}
+			System.out.println("Data chargés: " + fileName );
 			reader.close();
 		}
 		catch (IOException e) {
-			System.err.println("Problem found " + fileName);
+			System.err.println( "Problème trouvé à " + fileName );
 		}
 	}
 	
-	public void loadModel(String fileName) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
-            Object tmp = in.readObject();
-			classifier = (FilteredClassifier) tmp;
-            in.close();
-       } 
-		catch (Exception e) {
-			System.err.println(fileName);
-		}
+	// loading model
+	public void loadModel( String fileName ) {
+	    try {
+	        ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
+                Object tmp = in.readObject();
+	        classifier = (FilteredClassifier) tmp;
+                in.close();
+            }
+	    catch (Exception e) {
+		System.err.println(fileName);
+            }
 	}
 	
+	// Create attributes
 	public void makeInstance() {
-		ArrayList<String> atts = new ArrayList<String>(2);
-		atts.add("commercial");
-		atts.add("informatique");
-		atts.add("btp");
-		atts.add("tourisme");
+		ArrayList<String> atts = new ArrayList<String>( 2 );
+		atts.add( "commercial" );
+		atts.add( "informatique" );
+		atts.add( "btp" );
+		atts.add( "tourisme" );
 
-		Attribute label = new Attribute("class", atts);
-		Attribute attribute = new Attribute("text",(List<String>) null);
-		ArrayList<Attribute> fvWekaAttributes = new ArrayList<Attribute>(2);
-		fvWekaAttributes.add(label);
-		fvWekaAttributes.add(attribute);
-		instances = new Instances("Test relation", fvWekaAttributes, 1);   
-		
-		// Set class index
-		instances.setClassIndex(0);
-		
-		// Create and add the instance
-		DenseInstance instance = new DenseInstance(2);
-		instance.setValue(attribute, text);
-		instances.add(instance);
+		Attribute label = new Attribute( "class", atts );
+		Attribute attribute = new Attribute( "text",(List<String>) null );
+		ArrayList<Attribute> fvWekaAttributes = new ArrayList<Attribute>( 2 );
+		fvWekaAttributes.add( label );
+		fvWekaAttributes.add( attribute );
+		instances = new Instances( "Test relation", fvWekaAttributes, 1 ); 
+		instances.setClassIndex( 0 );
+		DenseInstance instance = new DenseInstance( 2 );
+		instance.setValue( attribute, text );
+		instances.add( instance );
 	}
 	
+	// classification method
 	public void classify() {
-		try {
-			double pred = classifier.classifyInstance(instances.instance(0));
-			System.out.println("Predicted class: " + instances.classAttribute().value((int) pred));
-		}
-		catch (Exception e) {
-			System.out.println("Problem found " + e.getStackTrace());
-		}		
+	    try {
+		double pred = classifier.classifyInstance(instances.instance(0));
+		System.out.println("Classe prédit: " + instances.classAttribute().value((int) pred));
+	    }
+	    catch (Exception e) {
+		System.out.println("Problème trouvé à " + e.getStackTrace());
+	    }		
 	}
 
 }
